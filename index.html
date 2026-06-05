@@ -1,0 +1,944 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WhatBot — like an organised friend in your group chat</title>
+  <meta name="description" content="WhatBot helps group chats keep plans, polls, lists, reminders, decisions, and catch-ups straight. Helpful when asked, quiet the rest of the time.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #111b15;
+      --ink-soft: #2c3a32;
+      --muted: #647168;
+      --faint: #8c978f;
+      --cream: #fcf6e8;
+      --cream-2: #fffaf0;
+      --surface: #fffdf7;
+      --line: #e7ddc8;
+      --line-strong: #d8c9ad;
+      --green: #25d366;
+      --green-deep: #075e54;
+      --green-dark: #0b3f2b;
+      --mint: #d9fdd3;
+      --mint-soft: #e8f8dc;
+      --oat: #f2e8d6;
+      --yellow: #ffe5a3;
+      --peach: #ffd8bd;
+      --sky: #dcecff;
+      --pink: #ffe0e6;
+      --charcoal: #111715;
+      --radius: 28px;
+      --radius-sm: 18px;
+      --shadow: 0 28px 90px rgba(50, 43, 30, 0.13);
+      --shadow-soft: 0 16px 46px rgba(50, 43, 30, 0.08);
+      --max: 1180px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 12% 5%, rgba(37, 211, 102, 0.20), transparent 32rem),
+        radial-gradient(circle at 88% 7%, rgba(255, 229, 163, 0.55), transparent 30rem),
+        linear-gradient(180deg, var(--cream) 0%, #fff9ee 38%, #fff7eb 100%);
+      line-height: 1.45;
+      text-rendering: optimizeLegibility;
+    }
+
+    a { color: inherit; }
+    .page-shell { overflow: hidden; }
+
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      max-width: calc(var(--max) + 48px);
+      margin: 0 auto;
+      padding: 18px 24px 0;
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 10px 12px;
+      border: 1px solid rgba(17, 27, 21, 0.12);
+      border-radius: 999px;
+      background: rgba(255, 250, 240, 0.82);
+      backdrop-filter: blur(18px);
+      box-shadow: 0 10px 30px rgba(50, 43, 30, 0.08);
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding-left: 4px;
+      text-decoration: none;
+      font-weight: 900;
+      letter-spacing: -0.045em;
+      font-size: 20px;
+    }
+
+    .brand-mark {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: var(--green-deep);
+      color: white;
+      font-size: 15px;
+      font-weight: 900;
+      box-shadow: inset 0 -8px 18px rgba(0,0,0,0.16), 0 10px 24px rgba(7, 94, 84, 0.22);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      color: var(--ink-soft);
+      font-size: 14px;
+      font-weight: 650;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      border-radius: 999px;
+      padding: 10px 12px;
+      transition: background 140ms ease;
+    }
+
+    .nav-links a:hover { background: rgba(17, 27, 21, 0.06); }
+
+    .nav-cta {
+      display: inline-flex;
+      min-height: 42px;
+      align-items: center;
+      justify-content: center;
+      padding: 0 16px;
+      border-radius: 999px;
+      background: var(--green);
+      border: 1px solid #13b951;
+      color: var(--ink);
+      text-decoration: none;
+      font-weight: 850;
+      box-shadow: 0 10px 24px rgba(37, 211, 102, 0.24);
+    }
+
+    .hero {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 62px 24px 64px;
+    }
+
+    .hero-card {
+      position: relative;
+      min-height: 720px;
+      display: grid;
+      grid-template-columns: minmax(0, 0.98fr) minmax(360px, 0.78fr);
+      gap: 40px;
+      align-items: center;
+      padding: clamp(28px, 5vw, 70px);
+      border-radius: 44px;
+      background:
+        linear-gradient(120deg, rgba(8, 63, 43, 0.92) 0%, rgba(8, 63, 43, 0.72) 45%, rgba(8, 63, 43, 0.18) 100%),
+        radial-gradient(circle at 80% 20%, rgba(37, 211, 102, 0.40), transparent 26rem),
+        linear-gradient(135deg, #0b3f2b, #154b35 48%, #f3dfb6 48.2%, #fff3dc 100%);
+      color: white;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(circle at 18px 18px, rgba(255,255,255,0.08) 2px, transparent 2px),
+        linear-gradient(135deg, transparent, rgba(255,255,255,0.10));
+      background-size: 42px 42px, auto;
+      opacity: 0.55;
+      pointer-events: none;
+    }
+
+    .hero-copy-wrap, .hero-visual { position: relative; z-index: 1; }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 8px 13px;
+      border: 1px solid rgba(255,255,255,0.22);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.11);
+      color: rgba(255,255,255,0.84);
+      font-size: 13px;
+      font-weight: 750;
+    }
+
+    .pulse {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--green);
+      box-shadow: 0 0 0 6px rgba(37, 211, 102, 0.15);
+    }
+
+    h1 {
+      margin: 24px 0 22px;
+      max-width: 780px;
+      font-size: clamp(54px, 8.4vw, 112px);
+      line-height: 0.91;
+      letter-spacing: -0.085em;
+      text-wrap: balance;
+    }
+
+    .hero-copy {
+      max-width: 670px;
+      margin: 0;
+      color: rgba(255,255,255,0.84);
+      font-size: clamp(19px, 2.1vw, 24px);
+      letter-spacing: -0.024em;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      margin-top: 34px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 50px;
+      padding: 0 20px;
+      border-radius: 999px;
+      border: 1px solid currentColor;
+      font-weight: 850;
+      text-decoration: none;
+      transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+    }
+
+    .button:hover { transform: translateY(-1px); }
+    .button-primary { background: var(--green); color: var(--ink); border-color: var(--green); box-shadow: 0 16px 34px rgba(37, 211, 102, 0.24); }
+    .button-secondary { background: rgba(255,255,255,0.10); color: white; border-color: rgba(255,255,255,0.34); }
+
+    .microcopy {
+      max-width: 620px;
+      margin: 16px 0 0;
+      color: rgba(255,255,255,0.78);
+      font-size: 14px;
+    }
+
+    .phone-cluster {
+      position: relative;
+      min-height: 620px;
+      display: grid;
+      place-items: center;
+    }
+
+    .floating-card {
+      position: absolute;
+      z-index: 3;
+      border-radius: 22px;
+      background: var(--surface);
+      color: var(--ink);
+      padding: 15px 16px;
+      box-shadow: 0 18px 46px rgba(0, 0, 0, 0.14);
+      border: 1px solid rgba(17, 27, 21, 0.08);
+      font-size: 14px;
+      font-weight: 750;
+    }
+
+    .floating-card.left { left: -20px; top: 86px; transform: rotate(-4deg); max-width: 210px; }
+    .floating-card.right { right: -22px; bottom: 110px; transform: rotate(4deg); max-width: 225px; }
+    .floating-card strong { color: var(--green-deep); }
+
+    .phone {
+      width: min(370px, 100%);
+      min-height: 600px;
+      border-radius: 42px;
+      padding: 14px;
+      background: #0b1411;
+      box-shadow: 0 34px 80px rgba(0, 0, 0, 0.34);
+      border: 1px solid rgba(255,255,255,0.16);
+      transform: rotate(1.5deg);
+    }
+
+    .phone-screen {
+      min-height: 570px;
+      border-radius: 30px;
+      background: #efe3d2;
+      background-image:
+        radial-gradient(circle at 21px 21px, rgba(255,255,255,0.30) 2px, transparent 2px),
+        linear-gradient(160deg, rgba(255,255,255,0.24), rgba(255,255,255,0));
+      background-size: 34px 34px, auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+      overflow: hidden;
+    }
+
+    .chat-top {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 8px 11px;
+      color: #213127;
+      font-weight: 850;
+    }
+
+    .avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: var(--green-deep);
+      color: white;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .chat-subtitle { display: block; color: rgba(33,49,39,0.62); font-size: 12px; font-weight: 650; margin-top: -1px; }
+
+    .bubble {
+      max-width: 90%;
+      padding: 12px 14px;
+      border-radius: 18px;
+      color: var(--ink);
+      font-size: 14px;
+      line-height: 1.36;
+      box-shadow: 0 1px 0 rgba(0,0,0,0.04);
+    }
+
+    .bubble.human { align-self: flex-end; background: #d9fdd3; border-bottom-right-radius: 5px; }
+    .bubble.bot { align-self: flex-start; background: white; border-bottom-left-radius: 5px; }
+    .bubble .label { display: block; margin-bottom: 4px; color: var(--green-deep); font-size: 12px; font-weight: 900; }
+
+    .typing-note {
+      margin-top: auto;
+      align-self: center;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.55);
+      color: rgba(33, 49, 39, 0.67);
+      font-size: 12px;
+      font-weight: 650;
+    }
+
+    .trust-strip {
+      max-width: var(--max);
+      margin: -20px auto 44px;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .trust-pill {
+      min-height: 58px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 12px 14px;
+      border-radius: 999px;
+      background: rgba(255, 253, 247, 0.80);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow-soft);
+      color: var(--ink-soft);
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    section {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 76px 24px;
+    }
+
+    .section-heading { max-width: 780px; margin-bottom: 34px; }
+    .section-heading.center { margin-left: auto; margin-right: auto; text-align: center; }
+    .section-heading h2 {
+      margin: 0 0 14px;
+      font-size: clamp(38px, 5.4vw, 68px);
+      line-height: 0.98;
+      letter-spacing: -0.068em;
+      text-wrap: balance;
+    }
+    .section-heading p { margin: 0; color: var(--muted); font-size: 18px; max-width: 690px; }
+    .section-heading.center p { margin-left: auto; margin-right: auto; }
+
+    .problem-card {
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: 30px;
+      align-items: center;
+      padding: clamp(26px, 4.2vw, 48px);
+      border-radius: var(--radius);
+      background: var(--surface);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .quote-stack { display: grid; gap: 10px; }
+    .quote {
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: var(--oat);
+      color: var(--ink-soft);
+      font-weight: 800;
+      border: 1px solid var(--line);
+    }
+    .quote:nth-child(2) { margin-left: 22px; background: var(--mint-soft); }
+    .quote:nth-child(3) { margin-left: 46px; background: var(--yellow); }
+    .quote:nth-child(4) { margin-left: 18px; background: var(--sky); }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 26px;
+    }
+
+    .step-card, .mode-card, .faq-card, .privacy-card {
+      border-radius: var(--radius);
+      background: var(--surface);
+      border: 1px solid var(--line);
+      box-shadow: 0 10px 26px rgba(50, 43, 30, 0.05);
+    }
+
+    .step-card { padding: 24px; }
+    .step-num {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      margin-bottom: 18px;
+      background: var(--green-deep);
+      color: white;
+      font-weight: 900;
+    }
+    .step-card h3, .mode-card h3, .faq-card h3, .privacy-card h3 { margin: 0 0 10px; font-size: 23px; letter-spacing: -0.045em; }
+    .step-card p, .mode-card p, .faq-card p, .privacy-card p { margin: 0; color: var(--muted); }
+
+    .mode-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
+    }
+
+    .mode-card {
+      min-height: 280px;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .mode-icon {
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      border-radius: 16px;
+      background: var(--mint);
+      color: var(--green-deep);
+      font-weight: 950;
+      font-size: 18px;
+    }
+    .mode-card:nth-child(2) .mode-icon { background: var(--yellow); color: #7c4c00; }
+    .mode-card:nth-child(3) .mode-icon { background: var(--peach); color: #854111; }
+    .mode-card:nth-child(4) .mode-icon { background: var(--sky); color: #244c87; }
+    .mode-card:nth-child(5) .mode-icon { background: var(--pink); color: #9d2640; }
+
+    .example-line {
+      margin-top: auto;
+      padding-top: 16px;
+      border-top: 1px solid var(--line);
+      color: var(--ink-soft);
+      font-size: 14px;
+      font-weight: 850;
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .scenario {
+      padding: 26px;
+      border-radius: var(--radius);
+      background: var(--charcoal);
+      color: white;
+      box-shadow: var(--shadow);
+    }
+
+    .scenario-title {
+      margin-bottom: 14px;
+      color: #a8e6c0;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-weight: 900;
+    }
+    .scenario .bubble { max-width: 100%; margin-bottom: 10px; }
+    .scenario .bubble.human { margin-left: auto; }
+
+    .quiet-card {
+      padding: 28px;
+      border-radius: var(--radius);
+      background: var(--surface);
+      border: 1px solid var(--line);
+    }
+
+    .quiet-list, .privacy-list {
+      display: grid;
+      gap: 13px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .quiet-list li, .privacy-list li {
+      display: grid;
+      grid-template-columns: 30px 1fr;
+      gap: 12px;
+      color: var(--ink-soft);
+      align-items: start;
+    }
+
+    .check {
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--mint);
+      color: var(--green-deep);
+      font-weight: 950;
+    }
+
+    .memory-band {
+      padding: clamp(26px, 4.2vw, 48px);
+      border-radius: 34px;
+      background: linear-gradient(135deg, #0c3f30, #101715);
+      color: white;
+      box-shadow: var(--shadow);
+    }
+
+    .memory-band .section-heading p { color: rgba(255,255,255,0.70); }
+
+    .tier-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 30px;
+    }
+
+    .tier-card {
+      padding: 22px;
+      border-radius: 24px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.14);
+    }
+    .tier-card h3 { margin: 0 0 8px; font-size: 24px; letter-spacing: -0.04em; }
+    .tier-card p { margin: 0; color: rgba(255,255,255,0.72); }
+    .tier-label { display: inline-flex; margin-bottom: 12px; padding: 6px 10px; border-radius: 999px; background: rgba(37,211,102,0.16); color: #baf8cd; font-size: 12px; font-weight: 900; }
+
+    .privacy-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .privacy-card { padding: 23px; }
+
+    .faq-wrap {
+      display: grid;
+      grid-template-columns: 0.78fr 1.22fr;
+      gap: 34px;
+      align-items: start;
+    }
+
+    .faq-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+    .faq-card { padding: 23px; }
+    .faq-card h3 { font-size: 20px; }
+
+    .access-card {
+      position: relative;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 22px;
+      align-items: center;
+      padding: clamp(28px, 4.2vw, 46px);
+      border-radius: 34px;
+      background: var(--green);
+      color: var(--ink);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .access-card::after {
+      content: "";
+      position: absolute;
+      width: 280px;
+      height: 280px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,255,255,0.45), transparent 66%);
+      right: -74px;
+      top: -110px;
+      pointer-events: none;
+    }
+    .access-card h2 { margin: 0 0 10px; font-size: clamp(34px, 4.4vw, 56px); line-height: 0.98; letter-spacing: -0.06em; }
+    .access-card p { margin: 0; max-width: 720px; color: rgba(17,27,21,0.72); font-size: 18px; }
+    .access-card .button { position: relative; z-index: 1; background: var(--ink); color: white; border-color: var(--ink); white-space: nowrap; }
+
+    footer {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 36px 24px 62px;
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    @media (max-width: 1040px) {
+      .hero-card, .problem-card, .split, .faq-wrap, .access-card { grid-template-columns: 1fr; }
+      .mode-grid { grid-template-columns: repeat(2, 1fr); }
+      .privacy-grid, .trust-strip { grid-template-columns: repeat(2, 1fr); }
+      .phone-cluster { min-height: auto; }
+      .floating-card.left { left: 0; top: 40px; }
+      .floating-card.right { right: 0; bottom: 42px; }
+    }
+
+    @media (max-width: 760px) {
+      .nav { padding-left: 14px; padding-right: 14px; }
+      .nav-links { display: none; }
+      .nav-cta { min-height: 40px; padding-inline: 14px; }
+      .hero { padding: 36px 16px 42px; }
+      .hero-card { min-height: 0; padding: 28px 20px; border-radius: 30px; }
+      .hero-copy { font-size: 18px; }
+      .phone { width: 100%; min-height: 560px; transform: none; }
+      .phone-screen { min-height: 530px; }
+      .floating-card { position: static; transform: none !important; max-width: none !important; margin-bottom: 10px; }
+      .trust-strip, .steps, .mode-grid, .privacy-grid, .faq-grid, .tier-grid { grid-template-columns: 1fr; }
+      .trust-strip { margin-top: 0; padding-left: 16px; padding-right: 16px; }
+      section { padding: 56px 16px; }
+      .problem-card, .quiet-card, .scenario, .memory-band, .access-card, .step-card, .mode-card, .faq-card, .privacy-card { padding: 22px; }
+      .quote:nth-child(2), .quote:nth-child(3), .quote:nth-child(4) { margin-left: 0; }
+      footer { padding-left: 16px; padding-right: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-shell">
+    <nav class="nav" aria-label="Primary navigation">
+      <div class="nav-inner">
+        <a class="brand" href="#top" aria-label="WhatBot home">
+          <span class="brand-mark">WB</span>
+          <span>WhatBot</span>
+        </a>
+        <div class="nav-links" aria-label="Page sections">
+          <a href="#how-it-works">How it works</a>
+          <a href="#uses">Uses</a>
+          <a href="#memory">Memory</a>
+          <a href="#faq">FAQs</a>
+        </div>
+        <a class="nav-cta" href="#early-access">Request access</a>
+      </div>
+    </nav>
+
+    <header class="hero" id="top">
+      <div class="hero-card">
+        <div class="hero-copy-wrap">
+          <div class="eyebrow"><span class="pulse" aria-hidden="true"></span> Starting with private WhatsApp group pilots</div>
+          <h1>Like an organised friend in your group chat.</h1>
+          <p class="hero-copy">WhatBot helps groups keep the boring useful bits straight — plans, polls, lists, reminders, decisions and catch-ups — only when asked, and quiet the rest of the time.</p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#early-access">Try it in one group</a>
+            <a class="button button-secondary" href="#how-it-works">See how it works</a>
+          </div>
+          <p class="microcopy">Built for the chats where people already coordinate: trips, house chats, dinners, clubs, teams and friend groups.</p>
+        </div>
+
+        <div class="hero-visual" aria-label="Example WhatBot conversation">
+          <div class="phone-cluster">
+            <div class="floating-card left"><strong>Quiet by default.</strong><br>It does not jump into every message.</div>
+            <div class="phone">
+              <div class="phone-screen">
+                <div class="chat-top"><span class="avatar">WB</span><span>Brighton weekend<span class="chat-subtitle">3 people · WhatBot added</span></span></div>
+                <div class="bubble human">WhatBot can you keep track of the Brighton plan?</div>
+                <div class="bubble bot"><span class="label">WhatBot</span>Yep. Dump whatever’s already known into one message and I’ll keep a simple summary. Rough is fine.</div>
+                <div class="bubble human">Hotel is Malmaison. Train Friday evening. Three of us so far. Need to pick Saturday dinner.</div>
+                <div class="bubble bot"><span class="label">WhatBot</span>Captured:<br>• Hotel: Malmaison<br>• Travel: train Friday evening<br>• People: three so far<br><br>Still to sort:<br>• Saturday dinner</div>
+                <div class="bubble human">What’s still undecided?</div>
+                <div class="bubble bot"><span class="label">WhatBot</span>For Brighton weekend, still to sort:<br>• Saturday dinner</div>
+                <div class="typing-note">Ask naturally. No dashboard needed.</div>
+              </div>
+            </div>
+            <div class="floating-card right"><strong>Visible memory.</strong><br>Ask what it remembers, or ask it to forget.</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="trust-strip" aria-label="Trust principles">
+      <div class="trust-pill">Helpful when asked</div>
+      <div class="trust-pill">Quiet the rest of the time</div>
+      <div class="trust-pill">Group-local memory</div>
+      <div class="trust-pill">Easy privacy controls</div>
+    </div>
+
+    <section id="how-it-works">
+      <div class="problem-card">
+        <div class="section-heading" style="margin-bottom: 0;">
+          <h2>Group chats are great for talking. Less great at keeping track.</h2>
+          <p>The plan gets buried. The poll result disappears. Someone asks the same question three days later. WhatBot gives the group a simple shared brain for the useful bits.</p>
+        </div>
+        <div class="quote-stack" aria-label="Common group chat moments">
+          <div class="quote">“Wait, what did we decide?”</div>
+          <div class="quote">“Who’s bringing ice?”</div>
+          <div class="quote">“What’s the hotel called again?”</div>
+          <div class="quote">“Can someone remind us tomorrow?”</div>
+        </div>
+      </div>
+
+      <div class="steps" aria-label="How WhatBot works">
+        <article class="step-card">
+          <div class="step-num">1</div>
+          <h3>Ask in the chat</h3>
+          <p>Mention WhatBot when the group wants help. It can also follow up when you reply to it.</p>
+        </article>
+        <article class="step-card">
+          <div class="step-num">2</div>
+          <h3>Send the messy version</h3>
+          <p>Dates, options, half-decisions, who’s doing what — no form, no command syntax.</p>
+        </article>
+        <article class="step-card">
+          <div class="step-num">3</div>
+          <h3>Ask later</h3>
+          <p>“What’s left?”, “who’s bringing what?”, “what do you remember?” or “forget that note.”</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="uses">
+      <div class="section-heading center">
+        <h2>Useful for normal group-life coordination.</h2>
+        <p>WhatBot is not trying to turn your group into a workplace app. It handles the small coordination jobs that otherwise keep coming back.</p>
+      </div>
+      <div class="mode-grid">
+        <article class="mode-card">
+          <div class="mode-icon">T</div>
+          <h3>Trips</h3>
+          <p>Keep track of hotels, travel, plans, decisions and what still needs sorting.</p>
+          <div class="example-line">“WhatBot, what’s the plan today?”</div>
+        </article>
+        <article class="mode-card">
+          <div class="mode-icon">H</div>
+          <h3>House chats</h3>
+          <p>Shopping, chores, repairs, bin days, shared reminders and house notes.</p>
+          <div class="example-line">“What do we need to buy?”</div>
+        </article>
+        <article class="mode-card">
+          <div class="mode-icon">P</div>
+          <h3>Dinners & parties</h3>
+          <p>Who’s bringing what, rough headcount, food, drink, timing and open questions.</p>
+          <div class="example-line">“Who’s bringing dessert?”</div>
+        </article>
+        <article class="mode-card">
+          <div class="mode-icon">C</div>
+          <h3>Clubs & teams</h3>
+          <p>Availability, next sessions, tasks, simple decisions and group reminders.</p>
+          <div class="example-line">“Who’s available this week?”</div>
+        </article>
+        <article class="mode-card">
+          <div class="mode-icon">D</div>
+          <h3>Decisions</h3>
+          <p>Remember what the group decided, what changed, and what still needs an answer.</p>
+          <div class="example-line">“What did we decide?”</div>
+        </article>
+      </div>
+    </section>
+
+    <section id="quiet">
+      <div class="split">
+        <div class="section-heading" style="margin-bottom: 0;">
+          <h2>Helpful without taking over the conversation.</h2>
+          <p>In a social chat, usefulness is not enough. The bot also has to know when to shut up.</p>
+        </div>
+        <div class="quiet-card">
+          <ul class="quiet-list">
+            <li><span class="check">✓</span><span>Replies when mentioned, replied to, clearly asked, or finishing something the group requested.</span></li>
+            <li><span class="check">✓</span><span>Uses short WhatsApp-readable answers instead of long product-tour explanations.</span></li>
+            <li><span class="check">✓</span><span>Asks at most one optional missing-detail question when a plan is vague.</span></li>
+            <li><span class="check">✓</span><span>Lets the group correct it. Useful context stays inspectable and forgettable.</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="split">
+        <div class="scenario">
+          <div class="scenario-title">Example: BBQ planning</div>
+          <div class="bubble human">WhatBot can you keep track of Saturday BBQ stuff?</div>
+          <div class="bubble bot"><span class="label">WhatBot</span>Yep. Send what’s known so far: time, place, food, who’s bringing what, and anything still undecided. Rough is fine.</div>
+          <div class="bubble human">Saturday 6ish at Nina’s. Burgers and veggie skewers. Bina dessert, Matt beers. Maybe 8 people. Need ice and the address.</div>
+          <div class="bubble bot"><span class="label">WhatBot</span>Captured:<br>• Time/place: Saturday 6ish at Nina’s<br>• Food: burgers and veggie skewers<br>• Bringing: Bina dessert, Matt beers<br>• People: maybe 8<br><br>Still to sort:<br>• Ice<br>• Address</div>
+          <div class="bubble human">What’s still undecided for the BBQ?</div>
+          <div class="bubble bot"><span class="label">WhatBot</span>For BBQ plan, still to sort:<br>• Ice<br>• Address</div>
+        </div>
+        <div class="section-heading" style="margin-bottom: 0; align-self: center;">
+          <h2>Messy chat in. Clean shared summary out.</h2>
+          <p>WhatBot turns scattered messages into group-local objects: plans, decisions, open questions, todo lists, polls and reminders. The group can then ask about them in plain language.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="memory">
+      <div class="memory-band">
+        <div class="section-heading" style="margin-bottom: 0;">
+          <h2>Memory should be clear, scoped and controllable.</h2>
+          <p>Different groups need different levels of memory. WhatBot keeps the boundary visible so people know what kind of help they are getting.</p>
+        </div>
+        <div class="tier-grid" aria-label="WhatBot memory modes">
+          <article class="tier-card">
+            <div class="tier-label">Mini</div>
+            <h3>No long-term memory</h3>
+            <p>Best for trying the bot lightly. It can answer current visible context, but it does not keep lasting group notes.</p>
+          </article>
+          <article class="tier-card">
+            <div class="tier-label">WhatBot</div>
+            <h3>Shared objects</h3>
+            <p>The default useful mode: plans, lists, reminders, polls, decisions, notes and open questions for this group only.</p>
+          </article>
+          <article class="tier-card">
+            <div class="tier-label">Genius</div>
+            <h3>Searchable group archive</h3>
+            <p>For groups that explicitly want fuller same-group history search. It is opt-in and still scoped to one group.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="privacy">
+      <div class="section-heading center">
+        <h2>Designed for a private-feeling space.</h2>
+        <p>Group chats can be personal. WhatBot should earn its place by being understandable, quiet and controllable.</p>
+      </div>
+      <div class="privacy-grid">
+        <article class="privacy-card">
+          <h3>Group-local</h3>
+          <p>One group’s memory should never appear in another group. Cross-group leakage is a trust failure.</p>
+        </article>
+        <article class="privacy-card">
+          <h3>Inspectable</h3>
+          <p>Ask “what do you remember?” and get a plain list of saved group things.</p>
+        </article>
+        <article class="privacy-card">
+          <h3>Forgettable</h3>
+          <p>Ask it to forget a saved item. It removes its stored copy, though not the original message on people’s phones.</p>
+        </article>
+        <article class="privacy-card">
+          <h3>Not for secrets</h3>
+          <p>WhatBot is for useful shared context, not confidential information people would not want stored.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="faq">
+      <div class="faq-wrap">
+        <div class="section-heading" style="margin-bottom: 0;">
+          <h2>FAQs</h2>
+          <p>Plain answers to the questions people ask before inviting a bot into a group chat.</p>
+        </div>
+        <div class="faq-grid">
+          <article class="faq-card">
+            <h3>What can WhatBot do?</h3>
+            <p>Summarise messy chat, track decisions and things still to sort, remember useful group notes, create polls, keep lists, set group reminders and help with plans.</p>
+          </article>
+          <article class="faq-card">
+            <h3>How do we use it?</h3>
+            <p>Mention WhatBot in the group and ask normally: “WhatBot, what did we decide?”, “remember Alex is vegetarian”, or “poll: Thai / Pizza / Indian”.</p>
+          </article>
+          <article class="faq-card">
+            <h3>Will it reply to everything?</h3>
+            <p>No. It is designed to stay quiet unless mentioned, replied to, clearly asked, or finishing something the group requested.</p>
+          </article>
+          <article class="faq-card">
+            <h3>Can it read my private WhatsApp?</h3>
+            <p>No. It only works in chats where it has been added. It cannot see your private chats or other groups.</p>
+          </article>
+          <article class="faq-card">
+            <h3>What does it remember?</h3>
+            <p>In the normal WhatBot mode, explicit shared things: notes, plans, reminders, polls, todos, decisions and open questions. Full archive search is a separate opt-in mode.</p>
+          </article>
+          <article class="faq-card">
+            <h3>Can we see or delete memory?</h3>
+            <p>Yes. Ask “what do you remember?” to inspect saved items, and ask it to forget specific things when they are no longer useful.</p>
+          </article>
+          <article class="faq-card">
+            <h3>Is this WhatsApp-only?</h3>
+            <p>The first pilots start in WhatsApp because that is where many groups already coordinate. The product idea is portable: a quiet organised friend for group chats.</p>
+          </article>
+          <article class="faq-card">
+            <h3>Is it a project manager?</h3>
+            <p>No. It should feel more like the organised friend who keeps the plan straight, not a workplace tool that tells everyone what to do.</p>
+          </article>
+          <article class="faq-card">
+            <h3>Can it help with photos or links?</h3>
+            <p>Where enabled, it can help find useful group-local media records and links. It should not reveal raw file paths, IDs or private setup details in the group.</p>
+          </article>
+          <article class="faq-card">
+            <h3>How early is this?</h3>
+            <p>Early. The current focus is careful private pilots, with trust and social fit treated as product features rather than afterthoughts.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="early-access">
+      <div class="access-card">
+        <div>
+          <h2>Try it in one real group.</h2>
+          <p>WhatBot works best when there is something concrete to coordinate: a trip, dinner, house chat, club, team, or friend group that keeps asking “what did we decide?”</p>
+        </div>
+        <a class="button" href="mailto:?subject=WhatBot%20early%20access&body=I%27d%20like%20to%20try%20WhatBot%20in%20one%20group.%0A%0AThe%20group%20is%20for%3A%0AThe%20main%20coordination%20pain%20is%3A">Request early access</a>
+      </div>
+    </section>
+
+    <footer>
+      <div>WhatBot is an early-stage group-chat helper. The first private pilots start in WhatsApp.</div>
+      <div>Helpful when asked. Quiet the rest of the time.</div>
+    </footer>
+  </div>
+</body>
+</html>
