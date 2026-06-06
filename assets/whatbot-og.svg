@@ -1,0 +1,31 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" rx="56" fill="#FCF6E8"/>
+  <circle cx="1040" cy="70" r="210" fill="#25D366" opacity="0.22"/>
+  <circle cx="85" cy="560" r="190" fill="#075E54" opacity="0.12"/>
+  <rect x="70" y="64" width="1060" height="502" rx="48" fill="#075E54"/>
+  <path d="M106 428C188 365 298 390 379 326C469 255 523 144 642 149C777 154 800 279 916 290C1004 298 1051 243 1094 198V518H106V428Z" fill="#0B3F2B" opacity="0.78"/>
+  <g transform="translate(778 96) rotate(4)">
+    <rect width="276" height="390" rx="34" fill="#0B1411"/>
+    <rect x="13" y="13" width="250" height="364" rx="25" fill="#EFE3D2"/>
+    <rect x="31" y="38" width="188" height="35" rx="17.5" fill="#D9FDD3"/>
+    <rect x="56" y="93" width="178" height="48" rx="18" fill="white"/>
+    <rect x="31" y="162" width="200" height="66" rx="18" fill="#D9FDD3"/>
+    <rect x="48" y="249" width="187" height="82" rx="18" fill="white"/>
+    <circle cx="50" cy="55" r="14" fill="#075E54"/>
+  </g>
+  <g transform="translate(106 102)">
+    <rect width="76" height="76" rx="24" fill="#25D366"/>
+    <text x="38" y="49" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="27" font-weight="900" fill="#075E54">WB</text>
+    <text x="0" y="150" font-family="Inter, Arial, sans-serif" font-size="76" line-height="1" font-weight="900" fill="#FFFDF7">WhatBot</text>
+    <text x="0" y="218" font-family="Inter, Arial, sans-serif" font-size="42" font-weight="800" fill="#D9FDD3">Like an organised friend</text>
+    <text x="0" y="270" font-family="Inter, Arial, sans-serif" font-size="42" font-weight="800" fill="#D9FDD3">in your group chat.</text>
+    <text x="0" y="346" font-family="Inter, Arial, sans-serif" font-size="30" font-weight="600" fill="#FFFDF7" opacity="0.88">Keep track of plans, polls, lists,</text>
+    <text x="0" y="386" font-family="Inter, Arial, sans-serif" font-size="30" font-weight="600" fill="#FFFDF7" opacity="0.88">reminders, decisions and catch-ups.</text>
+  </g>
+  <g transform="translate(106 494)">
+    <rect width="326" height="48" rx="24" fill="#25D366"/>
+    <text x="163" y="32" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="20" font-weight="850" fill="#075E54">Helpful when asked</text>
+    <rect x="346" width="302" height="48" rx="24" fill="#FFFDF7" opacity="0.94"/>
+    <text x="497" y="32" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="20" font-weight="850" fill="#075E54">Quiet by default</text>
+  </g>
+</svg>
