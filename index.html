@@ -355,8 +355,9 @@
     .chat-subtitle { display: block; color: rgba(33,49,39,0.62); font-size: 12px; font-weight: 650; margin-top: -1px; }
 
     .bubble {
+      position: relative;
       max-width: 90%;
-      padding: 12px 14px;
+      padding: 12px 15px 13px;
       border-radius: 18px;
       color: var(--ink);
       font-size: 14px;
@@ -367,6 +368,32 @@
     .bubble.human { align-self: flex-end; background: #d9fdd3; border-bottom-right-radius: 5px; }
     .bubble.bot { align-self: flex-start; background: white; border-bottom-left-radius: 5px; }
     .bubble .label { display: block; margin-bottom: 4px; color: var(--green-deep); font-size: 12px; font-weight: 900; }
+
+    .msg-meta {
+      float: right;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      margin: 8px 0 -1px 12px;
+      color: rgba(17, 27, 21, 0.48);
+      font-size: 10px;
+      line-height: 1;
+      font-weight: 650;
+      letter-spacing: -0.01em;
+      white-space: nowrap;
+    }
+
+    .bubble.bot .msg-meta {
+      color: rgba(17, 27, 21, 0.42);
+    }
+
+    .ticks {
+      color: #5faec8;
+      font-size: 11px;
+      letter-spacing: -0.32em;
+      padding-right: 3px;
+      transform: translateY(-1px);
+    }
 
     .typing-note {
       margin-top: auto;
@@ -735,12 +762,12 @@
             <div class="phone">
               <div class="phone-screen">
                 <div class="chat-top"><span class="avatar">WB</span><span>Brighton weekend<span class="chat-subtitle">3 people · WhatBot added</span></span></div>
-                <div class="bubble human">WhatBot can you keep track of the Brighton plan?</div>
-                <div class="bubble bot"><span class="label">WhatBot</span>Yep. Dump whatever’s already known into one message and I’ll keep a simple summary. Rough is fine.</div>
-                <div class="bubble human">Hotel is Malmaison. Train Friday evening. Three of us so far. Need to pick Saturday dinner.</div>
-                <div class="bubble bot"><span class="label">WhatBot</span>Captured:<br>• Hotel: Malmaison<br>• Travel: train Friday evening<br>• People: three so far<br><br>Still to sort:<br>• Saturday dinner</div>
-                <div class="bubble human">What’s still undecided?</div>
-                <div class="bubble bot"><span class="label">WhatBot</span>For Brighton weekend, still to sort:<br>• Saturday dinner</div>
+                <div class="bubble human">WhatBot can you keep track of the Brighton plan?<span class="msg-meta">10:12 <span class="ticks" aria-hidden="true">✓✓</span></span></div>
+                <div class="bubble bot"><span class="label">WhatBot</span>Yep. Dump whatever’s already known into one message and I’ll keep a simple summary. Rough is fine.<span class="msg-meta">10:12</span></div>
+                <div class="bubble human">Hotel is Malmaison. Train Friday evening. Three of us so far. Need to pick Saturday dinner.<span class="msg-meta">10:14 <span class="ticks" aria-hidden="true">✓✓</span></span></div>
+                <div class="bubble bot"><span class="label">WhatBot</span>Captured:<br>• Hotel: Malmaison<br>• Travel: train Friday evening<br>• People: three so far<br><br>Still to sort:<br>• Saturday dinner<span class="msg-meta">10:14</span></div>
+                <div class="bubble human">What’s still undecided?<span class="msg-meta">10:17 <span class="ticks" aria-hidden="true">✓✓</span></span></div>
+                <div class="bubble bot"><span class="label">WhatBot</span>For Brighton weekend, still to sort:<br>• Saturday dinner<span class="msg-meta">10:17</span></div>
                 <div class="typing-note">Ask naturally. No dashboard needed.</div>
               </div>
             </div>
